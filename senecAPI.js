@@ -29,7 +29,8 @@ class SenecAPI {
     } catch (redirectException) {
       // axios throws an exception if redirects happen and maxRedirects is 0 :(
       // this means, we need to use the response in the exception to get our cookie information and discard the rest
-      if (redirectException.response.status != 302) throw result; // we only handle errors, if we got a redirect
+      if (!redirectException || !redirectException.response) throw redirectException;
+      if (redirectException.response.status != 302) throw redirectException; // we only handle errors, if we got a redirect
       result = redirectException;
     }
     return this.extractCookie(result.response.headers); // first cookie in cookies array. Get only the cookie part
